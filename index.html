@@ -36,10 +36,15 @@
     <label for="universalRepulsiveForce">universalRepulsiveForce:</label>
     <input type="number" id="universalRepulsiveForce" value="100">
     <br>
+    <label for="maxVelocity">maxVelocity:</label>
+    <input type="number" id="maxVelocity" value="100">
+    <br>
 
     <canvas id="particleCanvas" style="border:1px solid #000;"></canvas>
     <canvas id="forceMatrixCanvas" width="400" height="400" style="border:1px solid #000;"></canvas>
-    <button onclick="restartSimulation()">Restart Simulation</button>
+    <button onclick="particleReset()">Reset Particles</button>
+    <button onclick="matrixRandom()">Randomize Matrix</button>
+    <button onclick="matrixZero()">Zero Matrix</button>
 
     <script>
         class ParticleInfo {
@@ -68,15 +73,18 @@
             maxDistance = parseFloat(document.getElementById("maxDistance").value);
             minDistance = parseFloat(document.getElementById("minDistance").value);
             universalRepulsiveForce = parseFloat(document.getElementById("universalRepulsiveForce").value);
+            maxVelocity = parseFloat(document.getElementById("maxVelocity").value);
 
             // initializeForceMatrix(true);
         }
 
-        function initializeForceMatrix(assignRand) {
+        function initializeForceMatrix(assignRand, setVal = 0) {
             forceMatrix = Array.from({ length: m }, () => Array(m).fill(0));
 
             if (assignRand) {
                 forceMatrix = forceMatrix.map(row => row.map(() => Math.floor(Math.random() * 21 - 10) / 10));
+            }else{
+                forceMatrix.forEach(row => row.fill(setVal));
             }
         }
 
@@ -146,6 +154,9 @@
 
                 a.vx += fx * dt;
                 a.vy += fy * dt;
+
+                a.vx = Math.min(Math.max(a.vx, -maxVelocity), maxVelocity);
+                a.vy = Math.min(Math.max(a.vy, -maxVelocity), maxVelocity);
             }
         }
 
@@ -164,10 +175,19 @@
             return particleList;
         }
 
-        function restartSimulation() {
+        function particleReset() {
+            initializeVariables();
+            particles = generateParticles(n);
+        }
+
+        function matrixRandom() {
             initializeVariables();
             initializeForceMatrix(true);
-            particles = generateParticles(n);
+        }
+
+        function matrixZero() {
+            initializeVariables();
+            initializeForceMatrix(false);
         }
 
         function drawForceMatrix() {
