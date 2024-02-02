@@ -37,7 +37,7 @@
     <input type="number" id="universalRepulsiveForce" value="100">
     <br>
 
-    <canvas id="particleCanvas" width="800" height="600"></canvas>
+    <canvas id="particleCanvas"></canvas>
     <canvas id="forceMatrixCanvas" width="400" height="400" style="border:1px solid #000;"></canvas>
     <button onclick="restartSimulation()">Restart Simulation</button>
 
@@ -55,7 +55,7 @@
         let sizeX, sizeY, dt, friction, particleVisSize, n, m, maxDistance, minDistance, universalRepulsiveForce;
         let particles = [];
         let forceMatrix = [];
-        let forceMatrixCanvas, forceMatrixCtx;
+        let particleCanvas, particleCtx, forceMatrixCanvas, forceMatrixCtx;
 
         function initializeVariables() {
             sizeX = parseFloat(document.getElementById("sizeX").value);
@@ -69,7 +69,7 @@
             minDistance = parseFloat(document.getElementById("minDistance").value);
             universalRepulsiveForce = parseFloat(document.getElementById("universalRepulsiveForce").value);
 
-            //initializeForceMatrix(true);
+            // initializeForceMatrix(true);
         }
 
         function initializeForceMatrix(assignRand) {
@@ -108,7 +108,7 @@
                         let attraction = forceMatrix[a.famIdx][b.famIdx] * 100;
                         let d = Math.sqrt(dx ** 2 + dy ** 2);
 
-                        let currentForce = 0; // Initialize currentForce
+                        let currentForce = 0; 
 
                         if (d <= maxDistance && d >= minDistance) {
                             let t = (d - minDistance) / (maxDistance - minDistance);
@@ -162,24 +162,21 @@
             forceMatrixCtx.clearRect(0, 0, forceMatrixCanvas.width, forceMatrixCanvas.height);
 
             for (let i = 0; i < m; i++) {
-                // Draw colored bars on the top
                 forceMatrixCtx.fillStyle = `hsl(${(i / m) * 360}, 100%, 50%)`;
                 forceMatrixCtx.fillRect(i * (forceMatrixCanvas.width / m), 0, forceMatrixCanvas.width / m, 20);
             }
 
             for (let j = 0; j < m; j++) {
-                // Draw colored bars on the side
                 forceMatrixCtx.fillStyle = `hsl(${(j / m) * 360}, 100%, 50%)`;
                 forceMatrixCtx.fillRect(0, j * (forceMatrixCanvas.height / m), 20, forceMatrixCanvas.height / m);
             }
 
             for (let i = 0; i < m; i++) {
                 for (let j = 0; j < m; j++) {
-                    // Draw matrix values
                     forceMatrixCtx.fillStyle = 'black';
                     let text = forceMatrix[i][j].toFixed(2);
-                    let x = i * (forceMatrixCanvas.width / m) + 5 + (forceMatrixCanvas.width / m - 30) / 2; // Center text horizontally
-                    let y = j * (forceMatrixCanvas.height / m) + 15 + (forceMatrixCanvas.height / m - 20) / 2; // Center text vertically
+                    let x = i * (forceMatrixCanvas.width / m) + 5 + (forceMatrixCanvas.width / m - 30) / 2; 
+                    let y = j * (forceMatrixCanvas.height / m) + 15 + (forceMatrixCanvas.height / m - 20) / 2; 
                     forceMatrixCtx.fillText(text, x, y);
                 }
             }
@@ -190,14 +187,16 @@
             initializeForceMatrix(true);
             particles = generateParticles(n);
 
-            let canvas = document.getElementById("particleCanvas");
-            let ctx = canvas.getContext("2d");
+            particleCanvas = document.getElementById("particleCanvas");
+            particleCanvas.width = sizeX;
+            particleCanvas.height = sizeY;
+            particleCtx = particleCanvas.getContext("2d");
 
             forceMatrixCanvas = document.getElementById("forceMatrixCanvas");
             forceMatrixCtx = forceMatrixCanvas.getContext("2d");
 
             function updateVisualization() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
 
                 updateParticles();
                 rule();
@@ -205,11 +204,11 @@
                 for (let i = 0; i < particles.length; i++) {
                     let particle = particles[i];
 
-                    ctx.beginPath();
-                    ctx.arc(particle.x, particle.y, particleVisSize, 0, 2 * Math.PI);
-                    ctx.fillStyle = `hsl(${(particle.famIdx / m) * 360}, 100%, 50%)`;
-                    ctx.fill();
-                    ctx.stroke();
+                    particleCtx.beginPath();
+                    particleCtx.arc(particle.x, particle.y, particleVisSize, 0, 2 * Math.PI);
+                    particleCtx.fillStyle = `hsl(${(particle.famIdx / m) * 360}, 100%, 50%)`;
+                    particleCtx.fill();
+                    particleCtx.stroke();
                 }
 
                 drawForceMatrix();
@@ -222,9 +221,19 @@
             // Listen for changes in input fields and update the simulation
             document.querySelectorAll('input').forEach(input => {
                 input.addEventListener('input', function () {
+
+                    let prevN = n;
+                    let prevM = m;
+ 
                     initializeVariables();
-                    initializeForceMatrix(true);
-                    particles = generateParticles(n);
+
+                    if (prevN !== n || prevM !== m) {
+                        initializeForceMatrix(true);
+                        particles = generateParticles(n);
+                    }
+
+                    particleCanvas.width = sizeX;
+                    particleCanvas.height = sizeY;
                 });
             });
 
@@ -237,7 +246,7 @@
                 let j = Math.floor((mouseY / forceMatrixCanvas.height) * m);
 
                 if (i >= 0 && i < m && j >= 0 && j < m) {
-                    let matrixUpdate = event.deltaY * 0.001;
+                    let matrixUpdate = event.deltaY * -0.001;
 
                     forceMatrix[i][j] = Math.min(Math.max(forceMatrix[i][j] += matrixUpdate, -1), 1);
                     drawForceMatrix();
