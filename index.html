@@ -156,8 +156,10 @@
                 a.vx += fx * dt;
                 a.vy += fy * dt;
 
-                a.vx = Math.min(Math.max(a.vx, -maxVelocity), maxVelocity);
-                a.vy = Math.min(Math.max(a.vy, -maxVelocity), maxVelocity);
+                if (maxVelocity > 0){
+                    a.vx = Math.min(Math.max(a.vx, -maxVelocity), maxVelocity);
+                    a.vy = Math.min(Math.max(a.vy, -maxVelocity), maxVelocity);
+                }
             }
         }
 
