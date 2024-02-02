@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Simulation</title>
+</head>
+<body>
+    <label for="sizeX">sizeX:</label>
+    <input type="number" id="sizeX" value="800">
+    <br>
+    <label for="sizeY">sizeY:</label>
+    <input type="number" id="sizeY" value="600">
+    <br>
+    <label for="dt">dt:</label>
+    <input type="number" id="dt" value="0.007">
+    <br>
+    <label for="friction">friction:</label>
+    <input type="number" id="friction" value="0.01">
+    <br>
+    <label for="particleVisSize">particleVisSize:</label>
+    <input type="number" id="particleVisSize" value="3">
+    <br>
+    <label for="n">n:</label>
+    <input type="number" id="n" value="50">
+    <br>
+    <label for="m">m:</label>
+    <input type="number" id="m" value="6">
+    <br>
+    <label for="maxDistance">maxDistance:</label>
+    <input type="number" id="maxDistance" value="100">
+    <br>
+    <label for="minDistance">minDistance:</label>
+    <input type="number" id="minDistance" value="15">
+    <br>
+    <label for="universalRepulsiveForce">universalRepulsiveForce:</label>
+    <input type="number" id="universalRepulsiveForce" value="100">
+    <br>
+
+    <canvas id="particleCanvas" width="800" height="600"></canvas>
+    <canvas id="forceMatrixCanvas" width="400" height="400" style="border:1px solid #000;"></canvas>
+    <button onclick="restartSimulation()">Restart Simulation</button>
+
+    <script>
+        class ParticleInfo {
+            constructor(famIdx, x, y, vx, vy) {
+                this.famIdx = famIdx;
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+            }
+        }
+
+        let sizeX, sizeY, dt, friction, particleVisSize, n, m, maxDistance, minDistance, universalRepulsiveForce;
+        let particles = [];
+        let forceMatrix = [];
+        let forceMatrixCanvas, forceMatrixCtx;
+
+        function initializeVariables() {
+            sizeX = parseFloat(document.getElementById("sizeX").value);
+            sizeY = parseFloat(document.getElementById("sizeY").value);
+            dt = parseFloat(document.getElementById("dt").value);
+            friction = parseFloat(document.getElementById("friction").value);
+            particleVisSize = parseFloat(document.getElementById("particleVisSize").value);
+            n = parseInt(document.getElementById("n").value);
+            m = parseInt(document.getElementById("m").value);
+            maxDistance = parseFloat(document.getElementById("maxDistance").value);
+            minDistance = parseFloat(document.getElementById("minDistance").value);
+            universalRepulsiveForce = parseFloat(document.getElementById("universalRepulsiveForce").value);
+
+            //initializeForceMatrix(true);
+        }
+
+        function initializeForceMatrix(assignRand) {
+            forceMatrix = Array.from({ length: m }, () => Array(m).fill(0));
+
+            if (assignRand) {
+                forceMatrix = forceMatrix.map(row => row.map(() => Math.floor(Math.random() * 21 - 10) / 10));
+            }
+        }
+
+        function updateParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                let a = particles[i];
+
+                a.x += a.vx * dt;
+                a.y += a.vy * dt;
+
+                a.vx *= friction;
+                a.vy *= friction;
+            }
+        }
+
+        function rule() {
+            for (let i = 0; i < n; i++) {
+                let fx = 0;
+                let fy = 0;
+                let a = particles[i];
+
+                for (let j = 0; j < n; j++) {
+                    let b = particles[j];
+
+                    if (b !== a) {
+                        let dx = a.x - b.x;
+                        let dy = a.y - b.y;
+
+                        let attraction = forceMatrix[a.famIdx][b.famIdx] * 100;
+                        let d = Math.sqrt(dx ** 2 + dy ** 2);
+
+                        let currentForce = 0; // Initialize currentForce
+
+                        if (d <= maxDistance && d >= minDistance) {
+                            let t = (d - minDistance) / (maxDistance - minDistance);
+                            currentForce = (1 - Math.abs(t - 0.5) * 2) * attraction;
+                        } else if (d > maxDistance) {
+                            currentForce = 0;
+                        } else if (d < minDistance) {
+                            let t = minDistance / d;
+                            currentForce = t * universalRepulsiveForce;
+                        }
+
+                        if (d === 0) {
+                            console.error("Distance is equal to Zero!");
+                        }
+
+                        fx += dx / d * currentForce;
+                        fy += dy / d * currentForce;
+                    }
+                }
+
+                fx *= maxDistance;
+                fy *= maxDistance;
+
+                a.vx += fx * dt;
+                a.vy += fy * dt;
+            }
+        }
+
+        function generateParticles(amount) {
+            let particleList = [];
+
+            for (let i = 0; i < amount; i++) {
+                let xPos = Math.random() * sizeX;
+                let yPos = Math.random() * sizeY;
+                let idx = Math.floor(Math.random() * m);
+
+                let particle = new ParticleInfo(idx, xPos, yPos, 0, 0);
+                particleList.push(particle);
+            }
+
+            return particleList;
+        }
+
+        function restartSimulation() {
+            initializeVariables();
+            initializeForceMatrix(true);
+            particles = generateParticles(n);
+        }
+
+        function drawForceMatrix() {
+            forceMatrixCtx.clearRect(0, 0, forceMatrixCanvas.width, forceMatrixCanvas.height);
+
+            for (let i = 0; i < m; i++) {
+                // Draw colored bars on the top
+                forceMatrixCtx.fillStyle = `hsl(${(i / m) * 360}, 100%, 50%)`;
+                forceMatrixCtx.fillRect(i * (forceMatrixCanvas.width / m), 0, forceMatrixCanvas.width / m, 20);
+            }
+
+            for (let j = 0; j < m; j++) {
+                // Draw colored bars on the side
+                forceMatrixCtx.fillStyle = `hsl(${(j / m) * 360}, 100%, 50%)`;
+                forceMatrixCtx.fillRect(0, j * (forceMatrixCanvas.height / m), 20, forceMatrixCanvas.height / m);
+            }
+
+            for (let i = 0; i < m; i++) {
+                for (let j = 0; j < m; j++) {
+                    // Draw matrix values
+                    forceMatrixCtx.fillStyle = 'black';
+                    let text = forceMatrix[i][j].toFixed(2);
+                    let x = i * (forceMatrixCanvas.width / m) + 5 + (forceMatrixCanvas.width / m - 30) / 2; // Center text horizontally
+                    let y = j * (forceMatrixCanvas.height / m) + 15 + (forceMatrixCanvas.height / m - 20) / 2; // Center text vertically
+                    forceMatrixCtx.fillText(text, x, y);
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            initializeVariables();
+            initializeForceMatrix(true);
+            particles = generateParticles(n);
+
+            let canvas = document.getElementById("particleCanvas");
+            let ctx = canvas.getContext("2d");
+
+            forceMatrixCanvas = document.getElementById("forceMatrixCanvas");
+            forceMatrixCtx = forceMatrixCanvas.getContext("2d");
+
+            function updateVisualization() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                updateParticles();
+                rule();
+
+                for (let i = 0; i < particles.length; i++) {
+                    let particle = particles[i];
+
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particleVisSize, 0, 2 * Math.PI);
+                    ctx.fillStyle = `hsl(${(particle.famIdx / m) * 360}, 100%, 50%)`;
+                    ctx.fill();
+                    ctx.stroke();
+                }
+
+                drawForceMatrix();
+
+                requestAnimationFrame(updateVisualization);
+            }
+
+            updateVisualization();
+
+            // Listen for changes in input fields and update the simulation
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', function () {
+                    initializeVariables();
+                    initializeForceMatrix(true);
+                    particles = generateParticles(n);
+                });
+            });
+
+            // Mousewheel event to edit forceMatrix values
+            forceMatrixCanvas.addEventListener('wheel', function (event) {
+                let mouseX = event.clientX - forceMatrixCanvas.getBoundingClientRect().left;
+                let mouseY = event.clientY - forceMatrixCanvas.getBoundingClientRect().top;
+
+                let i = Math.floor((mouseX / forceMatrixCanvas.width) * m);
+                let j = Math.floor((mouseY / forceMatrixCanvas.height) * m);
+
+                if (i >= 0 && i < m && j >= 0 && j < m) {
+                    let matrixUpdate = event.deltaY * 0.001;
+
+                    forceMatrix[i][j] = Math.min(Math.max(forceMatrix[i][j] += matrixUpdate, -1), 1);
+                    drawForceMatrix();
+                }
+
+                event.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>
