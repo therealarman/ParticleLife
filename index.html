@@ -45,6 +45,7 @@
     <button onclick="particleReset()">Reset Particles</button>
     <button onclick="matrixRandom()">Randomize Matrix</button>
     <button onclick="matrixZero()">Zero Matrix</button>
+    <button onclick="snakeMode()">🐍</button>
 
     <script>
         class ParticleInfo {
@@ -188,6 +189,19 @@
         function matrixZero() {
             initializeVariables();
             initializeForceMatrix(false);
+        }
+        
+        function snakeMode() {
+            initializeVariables();
+            initializeForceMatrix(false);
+
+            for (let i = 0; i < m; i++) {
+                forceMatrix[i][i] = -1;
+                const nextIndex = (i - 1) % m;
+                forceMatrix[i][nextIndex] = -0.4;
+            }
+
+            drawForceMatrix();
         }
 
         function drawForceMatrix() {
