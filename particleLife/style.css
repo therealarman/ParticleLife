@@ -1,0 +1,26 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  border: 0;
+  overflow: hidden;
+  /*  Disable scrollbars */
+  display: block;
+  /* No floating content on sides */
+}
+
+/*#particleCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    border: 1px solid #000;
+}*/
+
+#forceMatrixCanvas {
+    border: 1px solid #000;
+}
+
+/* Add any additional styling as needed */
