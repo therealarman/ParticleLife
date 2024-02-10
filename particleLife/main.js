@@ -8,10 +8,14 @@ class ParticleInfo {
     }
 }
 
-let rMax, sizeX, sizeY, dt, friction, particleVisSize, n, m, maxDistance, minDistance, universalRepulsiveForce;
+let rMax, sizeX, sizeY, dt, particleVisSize, n, m;
 let particles = [];
 let forceMatrix = [];
 let particleCanvas, particleCtx, forceMatrixCanvas, forceMatrixCtx;
+
+let friction = 0.2;
+let maxDistance = 1;
+let minDistance = 0.3;
 
 function initializeVariables() {
     var particleCanvas = document.getElementById("particleCanvas");
@@ -23,15 +27,13 @@ function initializeVariables() {
     sizeY = particleCanvas.height;
 
     dt = parseFloat(document.getElementById("dt").value);
-    friction = parseFloat(document.getElementById("friction").value);
+    // friction = parseFloat(document.getElementById("friction").value);
     particleVisSize = parseFloat(document.getElementById("particleVisSize").value);
     n = parseInt(document.getElementById("n").value);
     m = parseInt(document.getElementById("m").value);
-    maxDistance = parseFloat(document.getElementById("maxDistance").value);
+    // maxDistance = parseFloat(document.getElementById("maxDistance").value);
     rMax = parseFloat(document.getElementById("rMax").value);
-    minDistance = parseFloat(document.getElementById("minDistance").value);
-    universalRepulsiveForce = parseFloat(document.getElementById("universalRepulsiveForce").value);
-    maxVelocity = parseFloat(document.getElementById("maxVelocity").value);
+    // minDistance = parseFloat(document.getElementById("minDistance").value);
 }
 
 function initializeForceMatrix(assignRand, setVal = 0) {
