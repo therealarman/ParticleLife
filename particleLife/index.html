@@ -13,32 +13,39 @@
     </div>
 
     <div class="siteMenu" id="siteMenu">
-        <label for="dt">dt:</label>
-        <input type="number" id="dt" value="0.07">
+        <label for="dt">Friction:</label>
+        <input type="number" id="dt" value="0.03">
         <br>
-        <label for="particleVisSize">particleVisSize:</label>
+        <label for="particleVisSize">Particle Size:</label>
         <input type="number" id="particleVisSize" value="3">
         <br>
-        <label for="n">n:</label>
+        <label for="n"># Of Particles:</label>
         <input type="number" id="n" value="1000">
         <br>    
-        <label for="m">m:</label>
-        <input type="number" id="m" value="6">
+        <label for="m"># Of Classes:</label>
+        <input type="number" id="m" value="18">
         <br>
-        <label for="rMax">rMax:</label>
-        <input type="number" id="rMax" value="0.1">
+        <label for="rMax">Force Radius Scalar:</label>
+        <input type="number" id="rMax" value="0.3">
         <br>
 
-        <canvas id="forceMatrixCanvas" width="400" height="400" style="border:1px solid #000;"></canvas>
+        <!-- <canvas id="forceMatrixCanvas" width="400" height="400" style="border:1px solid #000;"></canvas> -->
+
+        <div class="forceMatrix" id="forceMatrix">
+            <canvas id="forceMatrixTopBar" width="400" height="20"></canvas>
+            <canvas id="forceMatrixSideBar" width="20" height="400"></canvas>
+            <canvas id="forceMatrixCanvas" width="400" height="400"></canvas>
+        </div>
+
         <br>
-        <button onclick="particleReset()">Reset Particles</button>
-        <button onclick="matrixRandom()">Randomize Matrix</button>
-        <button onclick="matrixZero()">Zero Matrix</button>
-        <button onclick="snakeMode()">🐍</button>
+
+        <div class="buttons" id="buttons">
+            <button onclick="particleReset()">Reset Particles</button>
+            <button onclick="initializeForceMatrix(true)">Randomize Matrix</button>
+            <button onclick="initializeForceMatrix(false)">Zero Matrix</button>
+            <button onclick="snake()">🐍</button>
+        </div>
     </div>
-
-    <!-- <canvas class="webgl"></canvas> -->
-    <!-- <script type="module" src="/main.js"></script> -->
     <script src="/main.js"></script>
 </body>
 </html>

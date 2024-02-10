@@ -1,3 +1,10 @@
+const particleCanvas = document.getElementById("particleCanvas");
+const particleCtx = particleCanvas.getContext("2d");
+
+const forceMatrixCanvas = document.getElementById("forceMatrixCanvas");
+const forceMatrixCtx = forceMatrixCanvas.getContext("2d");
+
+
 class ParticleInfo {
     constructor(famIdx, x, y, vx, vy) {
         this.famIdx = famIdx;
@@ -11,14 +18,12 @@ class ParticleInfo {
 let rMax, sizeX, sizeY, dt, particleVisSize, n, m;
 let particles = [];
 let forceMatrix = [];
-let particleCanvas, particleCtx, forceMatrixCanvas, forceMatrixCtx;
 
-let friction = 0.2;
-let maxDistance = 1;
-let minDistance = 0.3;
+const friction = 0.2;
+const maxDistance = 1;
+const minDistance = 0.3;
 
 function initializeVariables() {
-    var particleCanvas = document.getElementById("particleCanvas");
     
     particleCanvas.width  = Math.min(window.innerWidth, innerHeight);;
     particleCanvas.height  = Math.min(window.innerWidth, innerHeight);;
@@ -27,13 +32,10 @@ function initializeVariables() {
     sizeY = particleCanvas.height;
 
     dt = parseFloat(document.getElementById("dt").value);
-    // friction = parseFloat(document.getElementById("friction").value);
     particleVisSize = parseFloat(document.getElementById("particleVisSize").value);
     n = parseInt(document.getElementById("n").value);
     m = parseInt(document.getElementById("m").value);
-    // maxDistance = parseFloat(document.getElementById("maxDistance").value);
     rMax = parseFloat(document.getElementById("rMax").value);
-    // minDistance = parseFloat(document.getElementById("minDistance").value);
 }
 
 function initializeForceMatrix(assignRand, setVal = 0) {
@@ -130,17 +132,7 @@ function particleReset() {
     particles = generateParticles(n);
 }
 
-function matrixRandom() {
-    initializeVariables();
-    initializeForceMatrix(true);
-}
-
-function matrixZero() {
-    initializeVariables();
-    initializeForceMatrix(false);
-}
-
-function snakeMode() {
+function snake() {
     initializeVariables();
     initializeForceMatrix(false);
 
@@ -149,46 +141,52 @@ function snakeMode() {
         const nextIndex = (i - 1) % m;
         forceMatrix[i][nextIndex] = -0.4;
     }
-
-    drawForceMatrix();
 }
 
 function drawForceMatrix() {
     forceMatrixCtx.clearRect(0, 0, forceMatrixCanvas.width, forceMatrixCanvas.height);
 
+    let topBar = document.getElementById("forceMatrixTopBar");
+    let tbCtx = topBar.getContext("2d");
+
+    let sideBar = document.getElementById("forceMatrixSideBar");
+    let sideCtx = sideBar.getContext("2d");
+
     for (let i = 0; i < m; i++) {
-        forceMatrixCtx.fillStyle = `hsl(${(i / m) * 360}, 100%, 50%)`;
-        forceMatrixCtx.fillRect(i * (forceMatrixCanvas.width / m), 0, forceMatrixCanvas.width / m, 20);
+        tbCtx.fillStyle = `hsl(${(i / m) * 360}, 100%, 50%)`;
+        tbCtx.fillRect(i * (forceMatrixCanvas.width / m), 0, forceMatrixCanvas.width / m, 20);
     }
 
     for (let j = 0; j < m; j++) {
-        forceMatrixCtx.fillStyle = `hsl(${(j / m) * 360}, 100%, 50%)`;
-        forceMatrixCtx.fillRect(0, j * (forceMatrixCanvas.height / m), 20, forceMatrixCanvas.height / m);
+        sideCtx.fillStyle = `hsl(${(j / m) * 360}, 100%, 50%)`;
+        sideCtx.fillRect(0, j * (forceMatrixCanvas.height / m), 20, forceMatrixCanvas.height / m);
     }
 
-    for (let i = 0; i < m; i++) {
-        for (let j = 0; j < m; j++) {
-            forceMatrixCtx.fillStyle = 'black';
-            let text = forceMatrix[i][j].toFixed(2);
-            let x = i * (forceMatrixCanvas.width / m) + 5 + (forceMatrixCanvas.width / m - 30) / 2;
-            let y = j * (forceMatrixCanvas.height / m) + 15 + (forceMatrixCanvas.height / m - 20) / 2;
-            forceMatrixCtx.fillText(text, x, y);
-        }
+for (let i = 0; i < m; i++) {
+    for (let j = 0; j < m; j++) {
+        let value = forceMatrix[i][j];
+
+        let redToBlack = `hsl(360, 100%, ${Math.abs(value) * 50}%)`;
+        let blackToGreen = `hsl(115, 100%, ${Math.abs(value) * 50}%)`;
+        
+        let color = value < 0 ? redToBlack : blackToGreen;
+
+        forceMatrixCtx.fillStyle = color;
+        let x = i * (forceMatrixCanvas.width / m);
+        let y = j * (forceMatrixCanvas.height / m);
+        let width = forceMatrixCanvas.width / m;
+        let height = forceMatrixCanvas.height / m;
+
+        forceMatrixCtx.fillRect(x, y, width, height);
     }
+}
+
 }
 
 document.addEventListener("DOMContentLoaded", function () {
     initializeVariables();
-    initializeForceMatrix(true);
+    snake();
     particles = generateParticles(n);
-
-    particleCanvas = document.getElementById("particleCanvas");
-    //particleCanvas.width = sizeX;
-    //particleCanvas.height = sizeY;
-    particleCtx = particleCanvas.getContext("2d");
-
-    forceMatrixCanvas = document.getElementById("forceMatrixCanvas");
-    forceMatrixCtx = forceMatrixCanvas.getContext("2d");
 
     function updateVisualization() {
         particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
@@ -198,7 +196,6 @@ document.addEventListener("DOMContentLoaded", function () {
         sizeX = particleCanvas.width;
         sizeY = particleCanvas.height;
 
-        // updateParticles();
         rule();
 
         for (let i = 0; i < particles.length; i++) {
@@ -229,9 +226,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 initializeForceMatrix(true);
                 particles = generateParticles(n);
             }
-
-            // particleCanvas.width = sizeX;
-            // particleCanvas.height = sizeY;
         });
     });
 

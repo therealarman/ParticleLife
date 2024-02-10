@@ -1,7 +1,5 @@
 html
 body {
-  /* width: 100%; */
-  /* height: 100%; */
   margin: 0px;
   border: 0;
   /* overflow: hidden; */
@@ -22,9 +20,34 @@ body {
     background-color: black;
 }
 
-#forceMatrixCanvas {
-    border: 1px solid #000;
+#forceMatrix {
+    position: relative;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
+
+#forceMatrixTopBar {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    z-index: 2;
+}
+
+#forceMatrixSideBar {
+    position: absolute;
+    top: 20px;
+    left: -10px;
+    z-index: 1;
+}
+
+#forceMatrixCanvas {
+    position: relative;
+    z-index: 0;
+    left: 10px;
+    top: 20px;
+    background-color: black;
+}
+
 
 #siteMenu {
     position: absolute;
@@ -34,24 +57,14 @@ body {
     mix-blend-mode: difference
 }
 
-/* .siteHeader {
-    position: fixed;
-    z-index: 10;
+#buttons {
+    position: relative;
+    /* width: 100vw; */
+    /* z-index: 10;
     left: calc(var(--pad)*2);
     top: calc(var(--pad)*2);
-    mix-blend-mode: difference
+    mix-blend-mode: difference */
 }
 
-.siteHeader_title {
-    margin: -0.1em 0 0 -0.04em;
-    font-weight: 200;
-    font-size: 30px
-}
 
-@media(min-width: 1280px) {
-    .siteHeader_title {
-        font-size:60px
-    }
-} */
 
-/* Add any additional styling as needed */
