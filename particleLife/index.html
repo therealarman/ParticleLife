@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Particle Simulation</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div>
+    <div class="particle">
         <canvas id="particleCanvas"></canvas>        
     </div>
 
-    <div class="siteMenu" id="siteMenu">
+    <div class="siteMenu">
         <label for="dt">Friction:</label>
         <input type="number" id="dt" value="0.03">
         <br>
@@ -32,8 +32,8 @@
         <!-- <canvas id="forceMatrixCanvas" width="400" height="400" style="border:1px solid #000;"></canvas> -->
 
         <div class="forceMatrix" id="forceMatrix">
-            <canvas id="forceMatrixTopBar" width="400" height="20"></canvas>
-            <canvas id="forceMatrixSideBar" width="20" height="400"></canvas>
+            <!-- <canvas id="forceMatrixTopBar" width="400" height="20"></canvas> -->
+            <!-- <canvas id="forceMatrixSideBar" width="20" height="400"></canvas> -->
             <canvas id="forceMatrixCanvas" width="400" height="400"></canvas>
         </div>
 

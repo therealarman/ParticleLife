@@ -146,21 +146,21 @@ function snake() {
 function drawForceMatrix() {
     forceMatrixCtx.clearRect(0, 0, forceMatrixCanvas.width, forceMatrixCanvas.height);
 
-    let topBar = document.getElementById("forceMatrixTopBar");
-    let tbCtx = topBar.getContext("2d");
+    // let topBar = document.getElementById("forceMatrixTopBar");
+    // let tbCtx = topBar.getContext("2d");
 
-    let sideBar = document.getElementById("forceMatrixSideBar");
-    let sideCtx = sideBar.getContext("2d");
+    // let sideBar = document.getElementById("forceMatrixSideBar");
+    // let sideCtx = sideBar.getContext("2d");
 
-    for (let i = 0; i < m; i++) {
-        tbCtx.fillStyle = `hsl(${(i / m) * 360}, 100%, 50%)`;
-        tbCtx.fillRect(i * (forceMatrixCanvas.width / m), 0, forceMatrixCanvas.width / m, 20);
-    }
+    // for (let i = 0; i < m; i++) {
+    //     tbCtx.fillStyle = `hsl(${(i / m) * 360}, 100%, 50%)`;
+    //     tbCtx.fillRect(i * (forceMatrixCanvas.width / m), 0, forceMatrixCanvas.width / m, 20);
+    // }
 
-    for (let j = 0; j < m; j++) {
-        sideCtx.fillStyle = `hsl(${(j / m) * 360}, 100%, 50%)`;
-        sideCtx.fillRect(0, j * (forceMatrixCanvas.height / m), 20, forceMatrixCanvas.height / m);
-    }
+    // for (let j = 0; j < m; j++) {
+    //     sideCtx.fillStyle = `hsl(${(j / m) * 360}, 100%, 50%)`;
+    //     sideCtx.fillRect(0, j * (forceMatrixCanvas.height / m), 20, forceMatrixCanvas.height / m);
+    // }
 
 for (let i = 0; i < m; i++) {
     for (let j = 0; j < m; j++) {
