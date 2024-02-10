@@ -13,17 +13,11 @@
     </div>
 
     <div class="siteMenu" id="siteMenu">
-        <label for="sizeX">sizeX:</label>
-        <input type="number" id="sizeX" value="1000">
-        <br>
-        <label for="sizeY">sizeY:</label>
-        <input type="number" id="sizeY" value="1000">
-        <br>
         <label for="dt">dt:</label>
-        <input type="number" id="dt" value="0.006">
+        <input type="number" id="dt" value="0.07">
         <br>
         <label for="friction">friction:</label>
-        <input type="number" id="friction" value="0.01">
+        <input type="number" id="friction" value="0.2">
         <br>
         <label for="particleVisSize">particleVisSize:</label>
         <input type="number" id="particleVisSize" value="3">
@@ -35,10 +29,13 @@
         <input type="number" id="m" value="6">
         <br>
         <label for="maxDistance">maxDistance:</label>
-        <input type="number" id="maxDistance" value="100">
+        <input type="number" id="maxDistance" value="1">
+        <br>
+        <label for="rMax">rMax:</label>
+        <input type="number" id="rMax" value="0.1">
         <br>
         <label for="minDistance">minDistance:</label>
-        <input type="number" id="minDistance" value="30">
+        <input type="number" id="minDistance" value="0.3">
         <br>
         <label for="universalRepulsiveForce">universalRepulsiveForce:</label>
         <input type="number" id="universalRepulsiveForce" value="100">
@@ -55,7 +52,7 @@
         <button onclick="snakeMode()">🐍</button>
     </div>
 
-    <canvas class="webgl"></canvas>
+    <!-- <canvas class="webgl"></canvas> -->
     <!-- <script type="module" src="/main.js"></script> -->
     <script src="/main.js"></script>
 </body>

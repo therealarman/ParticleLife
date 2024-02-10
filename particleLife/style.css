@@ -19,7 +19,7 @@ body {
     right: 0;
     width: min(100vh, 100vw);
     height: min(100vh, 100vw);
-    /* background-color: black; */
+    background-color: black;
 }
 
 #forceMatrixCanvas {
