@@ -14,15 +14,17 @@ let forceMatrix = [];
 let particleCanvas, particleCtx, forceMatrixCanvas, forceMatrixCtx;
 
 function initializeVariables() {
-    particleCanvas = document.getElementById("particleCanvas");
+    var particleCanvas = document.getElementById("particleCanvas");
     
-    particleCanvas.width  = window.innerWidth;
-    particleCanvas.height  = window.innerHeight;
+    particleCanvas.width  = Math.min(window.innerWidth, innerHeight);;
+    particleCanvas.height  = Math.min(window.innerWidth, innerHeight);;
     
     sizeX = particleCanvas.width;
     sizeY = particleCanvas.height;
-    // sizeX = parseFloat(document.getElementById("sizeX").value);
-    // sizeY = parseFloat(document.getElementById("sizeY").value);
+
+    document.getElementById("sizeX").value = sizeX
+    document.getElementById("sizeY").value = sizeY
+
     dt = parseFloat(document.getElementById("dt").value);
     friction = parseFloat(document.getElementById("friction").value);
     particleVisSize = parseFloat(document.getElementById("particleVisSize").value);
@@ -182,7 +184,8 @@ function drawForceMatrix() {
 
 document.addEventListener("DOMContentLoaded", function () {
     initializeVariables();
-    initializeForceMatrix(true);
+    // initializeForceMatrix(true);
+    matrixZero();
     particles = generateParticles(n);
 
     particleCanvas = document.getElementById("particleCanvas");
@@ -195,12 +198,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateVisualization() {
         particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+        particleCanvas.width  = Math.min(window.innerWidth, innerHeight);
+        particleCanvas.height  = Math.min(window.innerWidth, innerHeight);
+        sizeX = particleCanvas.width;
+        sizeY = particleCanvas.height;
+
         updateParticles();
         rule();
+
         for (let i = 0; i < particles.length; i++) {
             let particle = particles[i];
             particleCtx.beginPath();
-            particleCtx.arc(particle.x, particle.y, particleVisSize, 0, 2 * Math.PI);
+            particleCtx.arc(particle.x, particle.y, (particleVisSize/1000)*sizeX, 0, 2 * Math.PI);
             particleCtx.fillStyle = `hsl(${(particle.famIdx / m) * 360}, 100%, 50%)`;
             particleCtx.fill();
         }
@@ -224,8 +234,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 particles = generateParticles(n);
             }
 
-            particleCanvas.width = sizeX;
-            particleCanvas.height = sizeY;
+            // particleCanvas.width = sizeX;
+            // particleCanvas.height = sizeY;
         });
     });
 
