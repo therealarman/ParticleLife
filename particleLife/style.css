@@ -6,6 +6,7 @@ body {
 
 :root {
     --minWide: min(100vh, 100vw);
+    --matrixSize: 90%;
 }
 
 .particle{
@@ -29,45 +30,63 @@ body {
     top: 0;
     left: 0;
     padding-top: 25px;
-    /* padding-left: 25px; */
     width: calc(100vw - var(--minWide));
     display: inline-block;  
 }
 
 #forceMatrix {
     position: relative;
-    padding-top: 25px;
-    padding-bottom: 25px;
-}
+    margin-top: 25px;
+    width: 50%;
+    height: 0;
+    padding-bottom: 50%;
+    background-color: black;
 
-#forceMatrixTopBar {
-    z-index: 2;
-    background-color: deeppink;
-}
-
-#forceMatrixSideBar {
-    z-index: 1;
-    background-color: deeppink;
-}
-
-#forceMatrixCanvas {
     padding-left: 0;
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
     display: block;
-    width: 50%;
+}
+
+#forceMatrixTopBar {
+    z-index: 2;
+    /* background-color: deeppink; */
+    position: absolute;
+    width: 90%;
+    height: 10%;
+    right: 0;
+    top: 0;
+}
+
+#forceMatrixSideBar {
+    z-index: 2;
+    /* background-color: deeppink; */
+    position: absolute;
+    width: 10%;
+    height: 90%;
+    left: 0;
+    bottom: 0;
+}
+
+#forceMatrixCanvas {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 90%;
 }
 
 @media (max-width: 1200px) {
 
     .particle {
-           /* position: static; */
-           /* width: 100%; */
+           position: static;
+           width: 100%;
+           top: 0;
+           left: 0;
        } 
     .siteMenu {
-        /* width: 100%; */
-        /* position: absolute; */
+        width: 100%;
+         position: static;
     }
    
 }
