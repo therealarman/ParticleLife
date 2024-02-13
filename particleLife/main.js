@@ -4,6 +4,9 @@ const particleCtx = particleCanvas.getContext("2d");
 const forceMatrixCanvas = document.getElementById("forceMatrixCanvas");
 const forceMatrixCtx = forceMatrixCanvas.getContext("2d");
 
+const mutateMatrixCanvas = document.getElementById("mutateMatrixCanvas");
+const mutateMatrixCtx = mutateMatrixCanvas.getContext("2d");
+
 
 class ParticleInfo {
     constructor(famIdx, x, y, vx, vy) {
@@ -18,6 +21,9 @@ class ParticleInfo {
 let rMax, sizeX, sizeY, dt, particleVisSize, n, m;
 let particles = [];
 let forceMatrix = [];
+let mutateMatrix = [];
+
+let Mx, My;
 
 const friction = 0.2;
 const maxDistance = 1;
@@ -45,6 +51,16 @@ function initializeForceMatrix(assignRand, setVal = 0) {
         forceMatrix = forceMatrix.map(row => row.map(() => Math.floor(Math.random() * 21 - 10) / 10));
     } else {
         forceMatrix.forEach(row => row.fill(setVal));
+    }
+}
+
+function initializeMutateMatrix(assignRand, setVal = 0) {
+    mutateMatrix = Array.from({ length: m }, () => Array(m).fill(0));
+
+    if (assignRand) {
+        mutateMatrix = mutateMatrix.map(row => row.map(() => Math.random()));
+    } else {
+        mutateMatrix.forEach(row => row.fill(setVal));
     }
 }
 
@@ -162,33 +178,88 @@ function drawForceMatrix() {
         sideCtx.fillRect(0, j * (forceMatrixCanvas.height / m), 20, forceMatrixCanvas.height / m);
     }
 
-for (let i = 0; i < m; i++) {
-    for (let j = 0; j < m; j++) {
-        let value = forceMatrix[i][j];
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < m; j++) {
+            let value = forceMatrix[i][j];
 
-        let redToBlack = `hsl(360, 100%, ${Math.abs(value) * 50}%)`;
-        let blackToGreen = `hsl(115, 100%, ${Math.abs(value) * 50}%)`;
-        
-        let color = value < 0 ? redToBlack : blackToGreen;
+            let redToBlack = `hsl(360, 100%, ${Math.abs(value) * 50}%)`;
+            let blackToGreen = `hsl(115, 100%, ${Math.abs(value) * 50}%)`;
+            
+            let color = value < 0 ? blackToGreen : redToBlack;
 
-        forceMatrixCtx.fillStyle = color;
-        let x = i * (forceMatrixCanvas.width / m);
-        let y = j * (forceMatrixCanvas.height / m);
-        let width = forceMatrixCanvas.width / m;
-        let height = forceMatrixCanvas.height / m;
+            forceMatrixCtx.fillStyle = color;
+            let x = i * (forceMatrixCanvas.width / m);
+            let y = j * (forceMatrixCanvas.height / m);
+            let width = forceMatrixCanvas.width / m;
+            let height = forceMatrixCanvas.height / m;
 
-        forceMatrixCtx.fillRect(x, y, width, height);
+            forceMatrixCtx.fillRect(x, y, width, height);
+        }
     }
 }
 
+function drawMutateMatrix() {
+    mutateMatrixCtx.clearRect(0, 0, mutateMatrixCanvas.width, mutateMatrixCanvas.height);
+
+    let topBar = document.getElementById("mutateMatrixTopBar");
+    let tbCtx = topBar.getContext("2d");
+
+    let sideBar = document.getElementById("mutateMatrixSideBar");
+    let sideCtx = sideBar.getContext("2d");
+
+    for (let i = 0; i < m; i++) {
+        tbCtx.fillStyle = `hsl(${(i / m) * 360}, 100%, 50%)`;
+        tbCtx.fillRect(i * (mutateMatrixCanvas.width / m), 0, mutateMatrixCanvas.width / m, 20);
+    }
+
+    for (let j = 0; j < m; j++) {
+        sideCtx.fillStyle = `hsl(${(j / m) * 360}, 100%, 50%)`;
+        sideCtx.fillRect(0, j * (mutateMatrixCanvas.height / m), 20, mutateMatrixCanvas.height / m);
+    }
+
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < m; j++) {
+            let value = mutateMatrix[i][j];
+            // mutateMatrix[i][j];
+
+            // let redToBlack = `hsl(360, 100%, ${Math.abs(value) * 50}%)`;
+            // let blackToGreen = `hsl(115, 100%, ${Math.abs(value) * 50}%)`;
+            
+            // let color = value < 0 ? blackToGreen : redToBlack;
+            let color = `hsl(115, 100%, ${Math.abs(value) * 50}%)`;
+
+            mutateMatrixCtx.fillStyle = color;
+            let x = i * (mutateMatrixCanvas.width / m);
+            let y = j * (mutateMatrixCanvas.height / m);
+            let width = mutateMatrixCanvas.width / m;
+            let height = mutateMatrixCanvas.height / m;
+
+            mutateMatrixCtx.fillRect(x, y, width, height);
+        }
+    }
+}
+
+function clampVal(val, min, max){
+    let clamped = Math.min(Math.max(val, min), max);
+    return clamped;
+}
+
+function inverseLerp(a, b, x) {
+
+    x = Math.max(Math.min(x, Math.max(a, b)), Math.min(a, b));
+  
+    return (x - a) / (b - a);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
     initializeVariables();
-    snake();
+    // snake();
+    initializeForceMatrix(true);
+    initializeMutateMatrix(true);
     particles = generateParticles(n);
 
     function updateVisualization() {
+
         particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
 
         particleCanvas.width  = Math.min(window.innerWidth, innerHeight);
@@ -208,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
             particleCtx.fill();
         }
         drawForceMatrix();
+        drawMutateMatrix();
 
         requestAnimationFrame(updateVisualization);
     }
@@ -220,12 +292,11 @@ document.addEventListener("DOMContentLoaded", function () {
             let prevN = n;
             let prevM = m;
 
-            // m = max(1, m);
-
             initializeVariables();
 
             if (prevN !== n || prevM !== m) {
                 initializeForceMatrix(true);
+                initializeMutateMatrix(true);
                 particles = generateParticles(n);
             }
         });
@@ -233,12 +304,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     forceMatrixCanvas.addEventListener('mousedown', function (event) {
         if (event.button === 1) {
-            let mouseX = event.clientX - forceMatrixCanvas.getBoundingClientRect().left;
-            let mouseY = event.clientY - forceMatrixCanvas.getBoundingClientRect().top;
-
-            let i = Math.floor((mouseX / forceMatrixCanvas.width) * m);
-            let j = Math.floor((mouseY / forceMatrixCanvas.height) * m);
-
+            forceMatrixBounds = forceMatrixCanvas.getBoundingClientRect();
+    
+            let i = Math.floor(m * inverseLerp(forceMatrixBounds.left, forceMatrixBounds.right, event.clientX));
+            let j = Math.floor(m * inverseLerp(forceMatrixBounds.top, forceMatrixBounds.bottom, event.clientY));
+    
             if (i >= 0 && i < m && j >= 0 && j < m) {
                 forceMatrix[i][j] = 0;
                 drawForceMatrix();
@@ -247,17 +317,48 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     forceMatrixCanvas.addEventListener('wheel', function (event) {
-        let mouseX = event.clientX - forceMatrixCanvas.getBoundingClientRect().left;
-        let mouseY = event.clientY - forceMatrixCanvas.getBoundingClientRect().top;
 
-        let i = Math.floor((mouseX / forceMatrixCanvas.width) * m);
-        let j = Math.floor((mouseY / forceMatrixCanvas.height) * m);
+        forceMatrixBounds = forceMatrixCanvas.getBoundingClientRect();
+
+        let i = Math.floor(m * inverseLerp(forceMatrixBounds.left, forceMatrixBounds.right, event.clientX));
+        let j = Math.floor(m * inverseLerp(forceMatrixBounds.top, forceMatrixBounds.bottom, event.clientY));
 
         if (i >= 0 && i < m && j >= 0 && j < m) {
             let matrixUpdate = event.deltaY * -0.001;
 
             forceMatrix[i][j] = Math.min(Math.max(forceMatrix[i][j] += matrixUpdate, -1), 1);
             drawForceMatrix();
+        }
+
+        event.preventDefault();
+    });
+
+    mutateMatrixCanvas.addEventListener('mousedown', function (event) {
+        if (event.button === 1) {
+            mutateMatrixBounds = mutateMatrixCanvas.getBoundingClientRect();
+    
+            let i = Math.floor(m * inverseLerp(mutateMatrixBounds.left, mutateMatrixBounds.right, event.clientX));
+            let j = Math.floor(m * inverseLerp(mutateMatrixBounds.top, mutateMatrixBounds.bottom, event.clientY));
+    
+            if (i >= 0 && i < m && j >= 0 && j < m) {
+                mutateMatrix[i][j] = 0;
+                drawMutateMatrix();
+            }
+        }
+    });
+
+    mutateMatrixCanvas.addEventListener('wheel', function (event) {
+
+        mutateMatrixBounds = mutateMatrixCanvas.getBoundingClientRect();
+
+        let i = Math.floor(m * inverseLerp(mutateMatrixBounds.left, mutateMatrixBounds.right, event.clientX));
+        let j = Math.floor(m * inverseLerp(mutateMatrixBounds.top, mutateMatrixBounds.bottom, event.clientY));
+
+        if (i >= 0 && i < m && j >= 0 && j < m) {
+            let matrixUpdate = event.deltaY * -0.001;
+
+            mutateMatrix[i][j] = Math.min(Math.max(mutateMatrix[i][j] += matrixUpdate, -1), 1);
+            drawMutateMatrix();
         }
 
         event.preventDefault();
