@@ -40,8 +40,7 @@ body {
     position: relative;
     width: 100%;
     height: auto;
-    /* display: inline-block; */
-    /* padding-bottom: 50%; */
+
 }
 
 .cMatrix {
@@ -94,15 +93,9 @@ body {
     width: 90%;
 }
 
-#buttons {
-    /* margin-top: 250px; */
-    /* position: absolute; */
-}
-
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
 
     .particle {
-        /* position: static; */
         width: 100%;
         top: 0;
         left: 0;
@@ -110,7 +103,20 @@ body {
     .siteMenu {
         width: 100%;
         margin-top: 100vw;
-        /* position: static; */
+        margin-left: 0;
+        text-align: center;
+    }
+
+    #forceMatrix {
+        float: left;
+        left: auto;
+        margin-left: 3.3%;
+    }
+    
+    #mutationMatrix {
+        float: right;
+        right: auto;
+        margin-right: 3.3%;
     }
    
 }

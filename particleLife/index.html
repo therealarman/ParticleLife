@@ -13,31 +13,50 @@
     </div>
 
     <div class="siteMenu">
+
         <label for="dt">Friction:</label>
         <input type="number" id="dt" value="0.03">
         <br>
+
         <label for="particleVisSize">Particle Size:</label>
         <input type="range" id="particleVisSize" min="1" max="10" value="3" oninput="_vs.value = this.value">
         <output id="_vs">3</output>
         <br>
+
         <label for="n"># Of Particles:</label>
         <input type="range" id="n" min="1" max="1000" value="1000" oninput="_n.value = this.value">
         <output id="_n">1000</output>
-        <br>    
-        <label for="m"># Of Classes:</label>
-        <input type="range" id="m" min="1" max="50" value="18" oninput="_m.value = this.value">
-        <output id="_m">18</output>
+        <button onclick="scatterPosition()">Reset Particles</button>
         <br>
+
+        <label for="m"># Of Classes:</label>
+        <input type="range" id="m" min="1" max="50" value="5" oninput="_m.value = this.value">
+        <output id="_m">18</output>
+        <button onclick="scatterClass()">Shuffle Classes</button>
+        <br>
+
         <label for="rMax">Force Radius Scalar:</label>
         <input type="number" id="rMax" value="0.3">
         <br>
 
-        <div class="buttons" id="buttons">
-            <button onclick="particleReset()">Reset Particles</button>
-            <button onclick="initializeForceMatrix(true)">Randomize Matrix</button>
-            <button onclick="initializeForceMatrix(false)">Zero Matrix</button>
-            <button onclick="snake()">🐍</button>
-        </div>
+        <label for="dropdown">Force Matrix Preset:</label>
+
+        <select id="dropdown">
+            <option value="1">Random</option>
+            <option value="2">Zero</option>
+            <option value="3">Snake</option>
+            <option value="4">Lines</option>
+            <option value="5">Symmetry</option>
+        </select>
+        <button onclick="setForceMatrixPreset()">Set Matrix</button>
+        <br>
+
+        <!-- <div class="buttons" id="buttons"> -->
+            <!-- <button onclick="particleReset()">Reset Particles</button> -->
+            <!-- <button onclick="initializeForceMatrix(true)">Randomize Matrix</button> -->
+            <!-- <button onclick="initializeForceMatrix(false)">Zero Matrix</button> -->
+            <!-- <button onclick="snake()">🐍</button> -->
+        <!-- </div> -->
 
         <br>
 
@@ -56,5 +75,6 @@
         </div>
     </div>
     <script src="/main.js"></script>
+    <script>document.addEventListener('contextmenu', event => event.preventDefault());</script>
 </body>
 </html>
