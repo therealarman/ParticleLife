@@ -39,8 +39,7 @@ body {
 #matrices {
     position: relative;
     width: 100%;
-    height: auto;
-
+    height: fit-content;
 }
 
 .cMatrix {
@@ -93,7 +92,7 @@ body {
     width: 90%;
 }
 
-@media (max-width: 900px) {
+@media (min-height: 70vw) {
 
     .particle {
         width: 100%;
@@ -118,5 +117,4 @@ body {
         right: auto;
         margin-right: 3.3%;
     }
-   
 }
